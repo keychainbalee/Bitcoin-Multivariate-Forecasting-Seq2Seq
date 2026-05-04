@@ -3,69 +3,71 @@
 <!--**Status Proyek:** LULUS BINTANG 5 (Advanced) 🌟🌟🌟🌟🌟-->  
 **Final Test MAE:** `0.00582` (Target: `< 0.015`)
 
-Proyek ini adalah submission akhir untuk kelas **Deep Learning Tingkat Lanjut** di Dicoding. Tujuan dari proyek ini adalah membangun model *Deep Learning* tingkat lanjut untuk memprediksi harga *Close* Bitcoin selama 24 jam ke depan menggunakan data historis multivariat (2017 - 2023).
+Proyek ini merupakan submission akhir untuk kelas **Deep Learning untuk Time Series (DLTM)** di Dicoding. Proyek ini berfokus pada prediksi harga *Close* Bitcoin selama 24 jam ke depan (*multi-step horizon*) menggunakan data historis multivariat dari tahun 2017 hingga 2023.
 
 ---
 
-## ✨ Fitur Unggulan & Pemenuhan Kriteria (Advanced)
-Proyek ini mengimplementasikan teknik-teknik *Advanced Deep Learning*, meliputi:
-- **Arsitektur Kompleks:** Model Baseline LSTM (Functional API) & Seq2Seq LSTM dengan Autoregressive / Teacher Forcing (Model Subclassing).
-- **Custom Layers:** Pembuatan ulang layer `Dense`, `Multi-Head Attention`, dan `Dropout` dari nol beserta fungsi `get_config()` untuk serialisasi.
-- **Custom Training Loop:** Pelatihan model menggunakan `tf.GradientTape` dengan optimasi `@tf.function` (Graph Execution) untuk akselerasi performa (Turbo Mode).
-- **Custom Loss & Callback:** Implementasi *Weighted MAE Loss* dan logika *Threshold Early Stopping* serta *Reduce Learning Rate on Plateau* secara kustom.
-- **Data Pipeline:** Menggunakan `tf.data.Dataset` untuk optimasi memori dan kecepatan pemrosesan *batch*.
+## ✅ Pemenuhan Kriteria Evaluasi Dicoding
+
+Proyek ini telah disusun secara komprehensif untuk memenuhi seluruh kriteria evaluasi mulai dari tingkat *Basic* hingga *Advanced*:
+
+### Kriteria 1: Persiapan Data & Model Baseline (Terpenuhi)
+- Menggunakan minimal 3 fitur input dan divisualisasikan korelasi antar fiturnya menggunakan **Heatmap**.
+- Memastikan tidak ada *data leakage* dalam pembagian dataset dan proses normalisasi.
+- Membuat *pipeline* data yang efisien menggunakan `tf.data.Dataset`.
+- Melakukan dekomposisi data target dan menentukan *window size* berdasarkan hasil uji **ACF dan PACF**.
+- Melakukan *feature engineering* dengan menambahkan fitur **Rolling Statistic**.
+- **[REVISI SELESAI]** Membangun dan melatih model LSTM Baseline menggunakan metode bawaan `model.fit()`, dibuktikan dengan log training yang tersimpan di notebook.
+
+### Kriteria 2: Arsitektur Model Kustom (Terpenuhi)
+- Membangun model **LSTM Baseline** (menggunakan Functional API).
+- Membangun model **Seq2Seq LSTM** dengan pendekatan *Teacher Forcing* dan *Autoregressive* (menggunakan Model Subclassing).
+- Membuat ulang *layer* dari nol (Custom Layer): `MyCustomDense`, `MyCustomAttention`, dan **tambahan custom layer** `MyCustomDropout`.
+- Mengaplikasikan *Custom Layers* tersebut ke dalam arsitektur model dan mengimplementasikan fungsi `get_config()` untuk keperluan penyimpanan format `.keras`.
+
+### Kriteria 3: Pelatihan Kustom & Evaluasi (Terpenuhi)
+- Membangun *Custom Training Loop* menggunakan `tf.GradientTape` (dioptimasi dengan *Turbo Mode* `@tf.function` untuk performa komputasi).
+- Membuat **Custom Loss MAE** (`weighted_mae_loss`) yang memberikan bobot *error* lebih besar pada prediksi langkah yang lebih jauh.
+- Membuat logika **Custom Callback** secara manual dari awal: *Early Stopping* (berdasarkan *threshold* target) dan *Reduce Learning Rate on Plateau*.
+- **[REVISI SELESAI]** Melakukan inferensi pada data Test untuk **KEDUA MODEL** (Baseline LSTM dan Seq2Seq LSTM).
+- **[REVISI SELESAI]** Menampilkan hasil inferensi kedua model dalam bentuk visualisasi *Line Chart* dan *Tabel Komparasi* (Aktual vs Prediksi vs Selisih).
+- Mencapai performa **Final MAE murni < 0.015** pada data Test untuk model Seq2Seq.
 
 ---
 
-## 📓 Penjelasan Struktur Notebook (Cell by Cell)
+## 📓 Struktur Eksekusi Notebook
 
-Keseluruhan *pipeline* proyek dibagi ke dalam 13 sel (cell) eksekusi utama di dalam Jupyter Notebook / Google Colab:
+Keseluruhan kode dijalankan secara berurutan tanpa *error* dengan struktur sebagai berikut:
 
-### 📥 Bagian 1: Persiapan & Eksplorasi Data
-* **Sel 1: Import Libraries**  
-  Memuat semua modul yang dibutuhkan seperti TensorFlow, Pandas, NumPy, Matplotlib, Seaborn, dan Statsmodels.
-* **Sel 2: Load Dataset**  
-  Mengunduh dan memuat dataset Crypto Multivariate (khusus Bitcoin) ke dalam Pandas DataFrame.
-* **Sel 3: Exploratory Data Analysis (EDA) & Correlation Heatmap**  
-  Menganalisis distribusi data dan membuat visualisasi *Heatmap* untuk memastikan minimal 3 fitur yang dipilih memiliki korelasi yang baik dengan target (Close).
-* **Sel 4: ACF, PACF & Time Series Decomposition**  
-  Melakukan uji *Autocorrelation*, *Partial Autocorrelation*, serta membedah komponen tren dan musiman (*seasonality*) untuk menentukan *Window Size* yang optimal.
-* **Sel 5: Feature Engineering**  
-  Membuat fitur baru menggunakan *Rolling Statistic* (seperti *Rolling Mean* atau *Rolling Std*) untuk menambah sinyal prediksi pada model.
+1. **Bagian 1: Eksplorasi & Preprocessing Data**
+   - *Load Dataset*, Visualisasi *Heatmap*, Uji Dekomposisi & ACF/PACF.
+   - Pembuatan fitur *Rolling Statistic*.
+   - Standarisasi (*Scaler*) yang di-*fit* hanya pada data *train* untuk mencegah kebocoran data.
+   - Pembungkusan data ke dalam format `tf.data.Dataset`.
 
-### ⚙️ Bagian 2: Preprocessing & Pipeline
-* **Sel 6: Data Splitting, Scaling & `tf.data.Dataset`**  
-  Membagi data (Train, Val, Test) secara sekuensial untuk menghindari *Data Leakage*, melakukan standarisasi/normalisasi, dan membungkusnya dalam fungsi *windowing* menggunakan pipeline `tf.data.Dataset` dengan `BATCH_SIZE = 256`.
+2. **Bagian 2: Arsitektur & Pelatihan Baseline**
+   - Definisi kelas untuk *Custom Layers*.
+   - Pembentukan arsitektur *Baseline LSTM* (Functional API).
+   - Eksekusi pelatihan *Baseline* dengan `model.fit()`.
 
-### 🧠 Bagian 3: Pembangunan Arsitektur Model (Custom)
-* **Sel 7: Definisi Custom Layers**  
-  Membangun kelas `MyCustomDense`, `MyCustomAttention`, dan `MyCustomDropout(rate=0.1)` dari modul dasar TensorFlow, lengkap dengan metode `get_config()` agar model dapat disimpan ke format `.keras`.
-* **Sel 8: Model Baseline LSTM (Functional API)**  
-  Merakit arsitektur *baseline* menggunakan lapisan standar digabung dengan *Custom Dense* dan *Custom Attention*.
-* **Sel 9: Model Seq2Seq LSTM (Model Subclassing)**  
-  Merakit arsitektur tingkat lanjut dengan *Encoder-Decoder LSTM*. Model ini mengimplementasikan *Teacher Forcing* saat *training* dan perulangan prediksi 24 langkah (*horizon*) dengan injeksi *Custom Dropout* untuk mencegah *overfitting*.
+3. **Bagian 3: Arsitektur & Pelatihan Seq2Seq (Custom Loop)**
+   - Pembentukan arsitektur *Seq2Seq LSTM* (Subclassing).
+   - Eksekusi pelatihan dengan *Custom Training Loop* (menampilkan metrik *epoch*, *train loss*, dan *val loss* secara dinamis).
+   - Otomatisasi penyimpanan model terbaik (`.keras`).
 
-### 🚀 Bagian 4: Custom Training & Evaluasi
-* **Sel 10: Hyperparameters, Metrics & Custom Loss**  
-  Mendefinisikan *Adam Optimizer*, *Stateful Metrics*, dan fungsi *Custom Loss* (`weighted_mae_loss`) yang memberikan pinalti/bobot lebih besar jika model salah menebak di jam-jam yang lebih jauh.
-* **Sel 11: Custom Training Loop (Turbo Mode)**  
-  Inti dari proses pelatihan! Menggunakan `tf.GradientTape` untuk menghitung gradien secara manual. Dilengkapi dengan:
-  - `@tf.function` untuk mempercepat komputasi.
-  - *Dynamic Progress Bar* (`tqdm`).
-  - *Threshold Early Stopping* (berhenti otomatis jika *Val Loss* < 0.015).
-  - Penyimpanan berkas ke `model_baseline_LSTM.keras` dan `best_model_seq2seq_LSTM.keras`.
-* **Sel 12: Inference, Visualisasi & Final Evaluation**  
-  Melakukan *Autoregressive Inference* pada data uji (Test). Menyajikan *Line Chart* perbandingan aktual vs prediksi, tabel selisih nilai, dan perhitungan **Final MAE murni** sebagai penentu kelulusan.
-* **Sel 13: Export Dependencies**  
-  Menjalankan perintah `!pip freeze > requirements.txt` untuk memastikan reprodusibilitas *environment*.
+4. **Bagian 4: Evaluasi Akhir**
+   - Pencetakan grafik prediksi dan tabel selisih untuk **Model Baseline**.
+   - Pencetakan grafik prediksi dan tabel selisih untuk **Model Seq2Seq**.
+   - Perhitungan rata-rata skor evaluasi MAE Final.
+   - *Generate* berkas `requirements.txt`.
 
 ---
 
-## 🛠️ Cara Menjalankan (How to Run)
-1. Buka `Nama_Submission_Akhir_DLTM.ipynb` di Google Colab atau Jupyter Notebook lokal.
-2. Pastikan Anda memiliki akses ke internet untuk mengunduh dataset pada blok awal.
-3. Disarankan menggunakan akselerator **GPU (T4)** untuk mempercepat proses *training*. Jika menggunakan CPU, *Custom Training Loop* tetap berjalan cepat berkat optimasi `@tf.function` (*Turbo Mode*).
-4. Jalankan sel secara berurutan (*Run All*). Notebook dijamin berjalan lancar tanpa *error* dari Sel 1 hingga Sel 13.
+## 🛠️ Cara Menjalankan Notebook
+1. Buka file `Nama_Submission_Akhir_DLTM.ipynb`.
+2. Pastikan terhubung dengan internet untuk mengunduh dataset pada sel awal.
+3. Notebook ini dapat dijalankan menggunakan *Runtime CPU* secara efisien berkat pemanfaatan Graph Execution (`@tf.function`), namun menggunakan GPU (T4) direkomendasikan.
+4. Jalankan sel berurutan dari atas ke bawah (*Run All*). Seluruh proses telah diverifikasi bebas dari *error*.
 
 ---
 *Dibuat untuk Submission Dicoding Academy*
