@@ -1,6 +1,6 @@
 # 📈 Advanced Multivariate Time Series Forecasting: Bitcoin Price Prediction
 
-**Status Proyek:** LULUS BINTANG 5 (Level: Advanced / Mastery) 🌟🌟🌟🌟🌟  
+**Status Proyek:** (Level: Skilled) 🌟🌟🌟🌟  
 **Fokus Model:** Seq2Seq LSTM dengan Autoregressive & Self-Attention 
 
 Proyek ini merupakan submission akhir untuk kelas **Deep Learning untuk Time Series (DLTM)** di Dicoding. Proyek ini berfokus pada prediksi harga *Close* Bitcoin selama 24 jam ke depan (*multi-step horizon*) menggunakan data historis multivariat dari tahun 2017 hingga 2023.
