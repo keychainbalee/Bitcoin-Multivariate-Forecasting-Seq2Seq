@@ -3,7 +3,7 @@
 **Target Penyelesaian:** Kelas Deep Learning untuk Time Series (DLTM) - Dicoding  
 **Arsitektur Utama:** Baseline LSTM & Seq2Seq LSTM (Autoregressive)
 
-Repositori ini berisi *notebook* untuk memprediksi harga *Close* Bitcoin dalam horizon 24 jam ke depan menggunakan data multivariat. Seluruh *pipeline* dirancang untuk memenuhi kriteria evaluasi tingkat *Advanced* (Bintang 5).
+Repositori ini berisi *notebook* untuk memprediksi harga *Close* Bitcoin dalam horizon 24 jam ke depan menggunakan data multivariat. Seluruh *pipeline* dirancang telah memenuhi kriteria evaluasi tingkat *Skilled* (Bintang 4 | ⭐⭐⭐⭐).
 
 ---
 
