@@ -1,6 +1,6 @@
 # 📈 Multivariate Crypto Forecasting (Bitcoin) - 24 Hours Horizon
 
-<!--**Status Proyek:** LULUS BINTANG 5 (Advanced) 🌟🌟🌟🌟🌟-->  
+**Status Proyek:** LULUS BINTANG 4 (Skilled) 🌟🌟🌟🌟
 **Final Test MAE (Seq2Seq):** `0.00773` (Syarat Advanced: `< 0.015`)
 
 Proyek ini merupakan submission akhir untuk kelas **Deep Learning untuk Time Series (DLTM)** di Dicoding. Proyek ini berfokus pada prediksi harga *Close* Bitcoin selama 24 jam ke depan (*multi-step horizon*) menggunakan data historis multivariat dari tahun 2017 hingga 2023.
